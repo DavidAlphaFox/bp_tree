@@ -238,7 +238,7 @@ insert(Key, Value, [{NodeId, Node} | Path], Tree = #bp_tree{order = Order}) ->
             case bp_tree_node:size(Node2) > 2 * Order of
                 true -> %% 如果需要进行树的分裂，则需要将切分的Key以及新的右侧子树放到上层路径上
                     {{Key2, RNodeId}, Tree2} = split_node(NodeId, Node2, Tree),
-                    insert(Key2, {NodeId, RNodeId}, Path, Tree2);
+                    insert(Key2, {NodeId, RNodeId}, Path, Tree2); %% 分割点左侧为小于Key的右侧为大于Key的
                 false ->
                     bp_tree_store:update_node(NodeId, Node2, Tree)
             end;
