@@ -58,7 +58,7 @@ find_with_sibling(Key, NodeId, Tree) ->
 -spec find(bp_tree:key(), bp_tree_node:id(), bp_tree:tree(), path()) ->
     {path(), bp_tree:tree()}.
 find(Key, NodeId, Tree, Path) ->
-    {{ok, Node}, Tree2} = bp_tree_store:get_node(NodeId, Tree),
+    {{ok, Node}, Tree2} = bp_tree_store:get_node(NodeId, Tree), %% 得到对应的Node
     Path2 = [{NodeId, Node} | Path],
     case bp_tree_node:child(Key, Node) of
         {ok, NodeId2} -> find(Key, NodeId2, Tree2, Path2);

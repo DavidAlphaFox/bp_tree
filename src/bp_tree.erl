@@ -118,8 +118,8 @@ insert(Key, Value, Tree = #bp_tree{order = Order}) ->
                 insert(Key, Value, Path, Tree3);
             {{error, not_found}, Tree2} ->
                 Root = bp_tree_node:new(Order, true),
-                {{ok, RootId}, Tree3} = bp_tree_store:create_node(Root, Tree2),
-                {ok, Tree4} = bp_tree_store:set_root_id(RootId, Tree3),
+                {{ok, RootId}, Tree3} = bp_tree_store:create_node(Root, Tree2),%%创建一个节点
+                {ok, Tree4} = bp_tree_store:set_root_id(RootId, Tree3),%% 设置RootID
                 {Path, Tree5} = bp_tree_path:find(Key, RootId, Tree4),
                 insert(Key, Value, Path, Tree5)
         end
@@ -234,9 +234,9 @@ insert(Key, Value, [], Tree = #bp_tree{order = Order}) ->
     bp_tree_store:set_root_id(RootId, Tree2);
 insert(Key, Value, [{NodeId, Node} | Path], Tree = #bp_tree{order = Order}) ->
     case bp_tree_node:insert(Key, Value, Node) of
-        {ok, Node2} ->
+        {ok, Node2} -> %% 插入到Node成功
             case bp_tree_node:size(Node2) > 2 * Order of
-                true ->
+                true -> %% 如果需要进行树的分裂，则需要将切分的Key以及新的右侧子树放到上层路径上
                     {{Key2, RNodeId}, Tree2} = split_node(NodeId, Node2, Tree),
                     insert(Key2, {NodeId, RNodeId}, Path, Tree2);
                 false ->
