@@ -153,13 +153,13 @@ insert({_Selector, _Key}, _Value, #bp_tree_array{size = Size, data = Data})
     when Size == erlang:size(Data) div 2 ->
     {error, out_of_space};
 insert({Selector, Key}, Value, Array = #bp_tree_array{size = Size}) ->
-    Pos = lower_bound(Key, Array),
+    Pos = lower_bound(Key, Array), %% 二分查找，找到Key所在的位置
     case get({key, Pos}, Array) of
-        {ok, Key} ->
+        {ok, Key} -> %% 返回Key，说明这个Key已经存在了
             {error, already_exists};
         {ok, _} ->
-            Array2 = shift_right(Pos, Array),
-            {ok, Array3} = update({key, Pos}, Key, Array2),
+            Array2 = shift_right(Pos, Array), %% 将所有Pos所在位置的Key向右移动
+            {ok, Array3} = update({key, Pos}, Key, Array2), %% 将Key放到该位置上
             {ok, _Array4} = update({Selector, Pos}, Value, Array3);
         {error, out_of_range} ->
             Array2 = Array#bp_tree_array{size = Size + 1},
@@ -217,9 +217,9 @@ remove({Selector, Key}, Array = #bp_tree_array{}) ->
 %%--------------------------------------------------------------------
 -spec split(array()) -> {array(), key(), array()}.
 split(Array = #bp_tree_array{size = Size, data = Data}) ->
-    Pivot = Size div 2 + 1,
+    Pivot = Size div 2 + 1,%% 分割点
     Begin = 2 * Pivot,
-    SplitKey = element(Begin, Data),
+    SplitKey = element(Begin, Data), %% 得到分割点的数据
     LData = setelement(Begin, Data, ?NIL),
     RData = list_to_tuple(lists:duplicate(erlang:size(Data), ?NIL)),
     {LData3, RData3} = lists:foldl(fun(Pos, {LData2, RData2}) ->
